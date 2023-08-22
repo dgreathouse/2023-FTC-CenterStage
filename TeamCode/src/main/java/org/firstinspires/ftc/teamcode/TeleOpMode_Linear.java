@@ -57,18 +57,20 @@ import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 @TeleOp(name="TeleOp 1", group="Linear Opmode")
 
 public class TeleOpMode_Linear extends CommandOpMode {
-    DriveSubsystem drive;
+    private Hw hw;
+    private DriveSubsystem drive;
+
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
 
     @Override
     public void initialize() {
-        Hw hw = new Hw(this);
+        hw = new Hw(this);
         hw.init();
 
         // Create subsystems
-        drive = new DriveSubsystem(this);
+        drive = new DriveSubsystem(this, hw);
 
         // Create Commands
         DriveDefaultCommand driveDefaultCommand = new DriveDefaultCommand(this,drive);

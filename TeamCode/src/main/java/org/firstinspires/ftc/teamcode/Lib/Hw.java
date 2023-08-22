@@ -9,10 +9,9 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 
 public class Hw {
-    public static MotorEx flDrive;
-    public static MotorEx frDrive;
-    public static MotorEx bDrive;
-    public static MotorEx brDrive;
+    public MotorEx flDrive;
+    public MotorEx frDrive;
+    public MotorEx bDrive;
 
     public static GamepadEx gpOperator, gpDriver;
     public static IMU imu;

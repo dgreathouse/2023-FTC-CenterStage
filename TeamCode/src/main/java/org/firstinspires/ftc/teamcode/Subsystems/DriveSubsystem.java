@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Vector2d;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -11,15 +12,20 @@ import org.firstinspires.ftc.teamcode.Lib.Hw;
 import org.firstinspires.ftc.teamcode.Lib.MyMath;
 
 public class DriveSubsystem extends SubsystemBase {
-
+    // Declare the MotorEx classes for each motor
+    private MotorEx flDrv, frDrv, bDrv;
     public static final Vector2d m_flVec = new Vector2d(Math.cos(30.0 * (Math.PI / 180.0)), Math.sin(30.0 * (Math.PI / 180.0)));
     public static final Vector2d m_frVec = new Vector2d(Math.cos(150.0 * (Math.PI / 180.0)), Math.sin(150.0 * (Math.PI / 180.0)));
     public static final Vector2d m_bVec = new Vector2d(Math.cos(270.0 * (Math.PI / 180.0)),  Math.sin(270.0 * (Math.PI / 180.0)));
 
     CommandOpMode m_opMode;
     double m_ySpeed, m_xSpeed, m_zRotation;
-    public DriveSubsystem(CommandOpMode _opMode) {
+    public DriveSubsystem(CommandOpMode _opMode, Hw _hw) {
         m_opMode = _opMode;
+        // Define the motor reference to be the MotorEx defined in Hw.java classe.
+        flDrv = _hw.flDrive;
+        frDrv = _hw.frDrive;
+        bDrv = _hw.bDrive;
     }
     public void driveCartesianIK(double _ySpeed, double _xSpeed, double _zRotation, double _gyroAngle) {
         double flSpeed = 0.0;
@@ -39,9 +45,9 @@ public class DriveSubsystem extends SubsystemBase {
         frSpeed = fieldOriented.scalarProject(m_frVec) + _zRotation;
         bSpeed = fieldOriented.scalarProject(m_bVec) + _zRotation;
 
-        Hw.flDrive.set(flSpeed);
-        Hw.frDrive.set(frSpeed);
-        Hw.bDrive.set(bSpeed);
+        flDrv.set(flSpeed);
+        frDrv.set(frSpeed);
+        bDrv.set(bSpeed);
 
     }
     public double getRobotAngle(){
@@ -52,16 +58,16 @@ public class DriveSubsystem extends SubsystemBase {
         Hw.imu.resetYaw();
     }
     public void resetMotors(){
-        Hw.flDrive.resetEncoder();
-        Hw.bDrive.resetEncoder();
-        Hw.frDrive.resetEncoder();
+        flDrv.resetEncoder();
+        bDrv.resetEncoder();
+        frDrv.resetEncoder();
 
     }
     public double getDriveDistanceInches(DAngle _angle){
         double rtn = 0;
-        double left = Hw.flDrive.getDistance();
-        double right = Hw.frDrive.getDistance();
-        double back = Hw.bDrive.getDistance();
+        double left = flDrv.getDistance();
+        double right = frDrv.getDistance();
+        double back = bDrv.getDistance();
         switch (_angle){
             case ang_0: // Left, Right
                 rtn = (left - right)/2;
@@ -89,12 +95,12 @@ public class DriveSubsystem extends SubsystemBase {
     }
     @Override
     public void periodic(){
-        m_opMode.telemetry.addData("L Inches = ", Hw.flDrive.getDistance());
-        m_opMode.telemetry.addData("R Inches = ", Hw.frDrive.getDistance());
-        m_opMode.telemetry.addData("B Inches = ", Hw.bDrive.getDistance());
-        m_opMode.telemetry.addData("L Vel = ", Hw.flDrive.getVelocity());
-        m_opMode.telemetry.addData("R Vel = ", Hw.frDrive.getVelocity());
-        m_opMode.telemetry.addData("B Vel = ", Hw.bDrive.getVelocity());
+        m_opMode.telemetry.addData("L Inches = ", flDrv.getDistance());
+        m_opMode.telemetry.addData("R Inches = ", frDrv.getDistance());
+        m_opMode.telemetry.addData("B Inches = ", bDrv.getDistance());
+        m_opMode.telemetry.addData("L Vel = ", flDrv.getVelocity());
+        m_opMode.telemetry.addData("R Vel = ", frDrv.getVelocity());
+        m_opMode.telemetry.addData("B Vel = ", bDrv.getVelocity());
         m_opMode.telemetry.addData("Robot Angle = ",getRobotAngle());
         m_opMode.telemetry.addData("DriveDistance = ", getDriveDistanceInches(DAngle.ang_0));
 

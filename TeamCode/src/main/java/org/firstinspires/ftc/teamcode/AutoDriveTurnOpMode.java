@@ -16,15 +16,16 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "Drive to Distance", group = "Auto OpMode")
 public class AutoDriveTurnOpMode extends CommandOpMode {
+    Hw hw;
     DriveSubsystem drive;
 
     @Override
     public void initialize() {
-        Hw hw = new Hw(this);
+        hw = new Hw(this);
         hw.init();
 
         // Create Subsystems
-        drive = new DriveSubsystem(this);
+        drive = new DriveSubsystem(this, hw);
 
         // Create Commands
         AutoDriveTurnCommandGroup auto = new AutoDriveTurnCommandGroup(this, drive);
