@@ -20,9 +20,15 @@ public class DriveSubsystem extends SubsystemBase {
 
     CommandOpMode m_opMode;
     double m_ySpeed, m_xSpeed, m_zRotation;
+
+    /** Class Constructor
+     *
+     * @param _opMode The opMode used which will be teleOp or Autonomous
+     * @param _hw The Hardware reference that contains all the hardware instances.
+     */
     public DriveSubsystem(CommandOpMode _opMode, Hw _hw) {
         m_opMode = _opMode;
-        // Define the motor reference to be the MotorEx defined in Hw.java classe.
+        // Define the motor reference to be the MotorEx defined in Hw.java class.
         flDrv = _hw.flDrive;
         frDrv = _hw.frDrive;
         bDrv = _hw.bDrive;
