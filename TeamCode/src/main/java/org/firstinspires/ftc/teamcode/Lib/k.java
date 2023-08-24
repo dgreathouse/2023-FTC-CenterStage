@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.Lib;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+
 public class k {
-    public static final class DRIVE{
-        public static final double InchPerCount = 0.03095;
+    public static final class DRIVE {
+        public static final double CPR = Motor.GoBILDA.RPM_435.getCPR();
+        public static final double WheelDiameter_in = 3.78;
+        public static final double WheelCircumference_in = Math.PI * WheelDiameter_in;
+        public static final double InchPerCount = WheelCircumference_in / CPR;
     }
-    public static final class CAMERA{
+    public static final class CAMERA {
         public static final double FEET_PER_METER = 3.28084;
         public static final double fx = 1420.7594;
         public static final double fy = 1420.9965;

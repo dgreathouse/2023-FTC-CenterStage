@@ -25,7 +25,7 @@ public class AutoDriveTurnOpMode extends CommandOpMode {
         hw.init();
 
         // Create Subsystems
-        drive = new DriveSubsystem(this, hw);
+        drive = new DriveSubsystem(this);
 
         // Create Commands
         AutoDriveTurnCommandGroup auto = new AutoDriveTurnCommandGroup(this, drive);

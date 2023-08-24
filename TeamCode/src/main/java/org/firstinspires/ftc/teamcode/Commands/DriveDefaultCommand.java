@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import androidx.core.math.MathUtils;
-
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 
@@ -43,18 +41,23 @@ public class DriveDefaultCommand extends CommandBase {
         // Get the X,Y, and Z axis values from the Driver joystick.
         // The values from the joystick are always in the range of +/- 1.0
         // Deadband is a applied to prevent the small on center offset from making the robot move when the thumb is off the stick
-        y = MyMath.applyDeadband(-Hw.gpDriver.getLeftY(), .05, 1.0);
-        x = MyMath.applyDeadband(Hw.gpDriver.getLeftX(), .05, 1.0);
-        z = MyMath.applyDeadband(-Hw.gpDriver.getRightX(), .05, 1.0);
+        y = MyMath.applyDeadband(-Hw.s_gpDriver.getLeftY(), .05, 1.0);
+        x = MyMath.applyDeadband(Hw.s_gpDriver.getLeftX(), .05, 1.0);
+        z = MyMath.applyDeadband(-Hw.s_gpDriver.getRightX(), .05, 1.0);
         // Get the angle of the robot in Degrees
         ang = drive.getRobotAngle();
-
+        // Scale the turning rotation down by 1/2
+        z = z * 0.5;
         // Call the drive method "driveCaresianIK" with the stick X,Y,Z and angle parameters
-        drive.driveCartesianIK(y,-x,z*.5,ang);
+        drive.driveCartesianIK(y,-x,z,ang);
         // Display the values of X,Y,Z on the driveStation.
         opMode.telemetry.addData("x = ", -x);
         opMode.telemetry.addData("y = ", y);
         opMode.telemetry.addData("z = ", z);
+    }
+    @Override
+    public void end(boolean _interrupted){
+        drive.driveCartesianIK(0,0,0,0);
     }
 
 }

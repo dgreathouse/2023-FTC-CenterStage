@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -70,7 +69,7 @@ public class TeleOpMode_Linear extends CommandOpMode {
         hw.init();
 
         // Create subsystems
-        drive = new DriveSubsystem(this, hw);
+        drive = new DriveSubsystem(this);
 
         // Create Commands
         DriveDefaultCommand driveDefaultCommand = new DriveDefaultCommand(this,drive);
@@ -79,7 +78,8 @@ public class TeleOpMode_Linear extends CommandOpMode {
         drive.setDefaultCommand(driveDefaultCommand);
 
         // Set up buttons
-        Hw.gpDriver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenActive(new InstantCommand(() -> drive.resetGyro(),drive));
+        Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenActive(new InstantCommand(() -> drive.resetGyro(),drive));
+        Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenActive(new InstantCommand(() -> drive.toggleIsFieldOriented(),drive));
     }
 
     @Override
