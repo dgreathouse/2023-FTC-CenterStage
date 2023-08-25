@@ -31,7 +31,7 @@ public class AutoDriveTurnOpMode extends CommandOpMode {
         AutoDriveTurnCommandGroup auto = new AutoDriveTurnCommandGroup(this, drive);
 
         // Register subsystems
-        register(drive);
+        // register(drive);
 
         // Schedule the auto play to run
         CommandScheduler.getInstance().schedule(auto);

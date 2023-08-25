@@ -36,32 +36,24 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Commands.DriveDefaultCommand;
+import org.firstinspires.ftc.teamcode.Commands.SampleDefaultCommand;
 import org.firstinspires.ftc.teamcode.Lib.Hw;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.SampleSubsystem;
 
 
 /**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When a selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+
  */
 
 @TeleOp(name="TeleOp 1", group="Linear Opmode")
 
 public class TeleOpMode_Linear extends CommandOpMode {
     private Hw hw;
-    private DriveSubsystem drive;
+    private DriveSubsystem m_drive;
+    private SampleSubsystem m_sample;  // FIXME: create the correct robot subsystems
 
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-
 
     @Override
     public void initialize() {
@@ -69,17 +61,21 @@ public class TeleOpMode_Linear extends CommandOpMode {
         hw.init();
 
         // Create subsystems
-        drive = new DriveSubsystem(this);
+        m_drive = new DriveSubsystem(this);
+        m_sample = new SampleSubsystem(this); // FIXME: create the correct robot subsystems
 
         // Create Commands
-        DriveDefaultCommand driveDefaultCommand = new DriveDefaultCommand(this,drive);
+        DriveDefaultCommand driveDefaultCommand = new DriveDefaultCommand(this, m_drive);
+        SampleDefaultCommand sampleDefaultCommand = new SampleDefaultCommand(this, m_sample);// FIXME: create the correct robot Commands
 
         // Set Default Commands
-        drive.setDefaultCommand(driveDefaultCommand);
+        m_drive.setDefaultCommand(driveDefaultCommand);
+        m_sample.setDefaultCommand(sampleDefaultCommand);// FIXME: create the correct robot Commands
 
         // Set up buttons
-        Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenActive(new InstantCommand(() -> drive.resetGyro(),drive));
-        Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenActive(new InstantCommand(() -> drive.toggleIsFieldOriented(),drive));
+        Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenActive(new InstantCommand(() -> m_drive.resetGyro(), m_drive));
+        Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenActive(new InstantCommand(() -> m_drive.toggleIsFieldOriented(), m_drive));
+
     }
 
     @Override
