@@ -46,14 +46,12 @@ public class AutoDriveCurve extends CommandBase {
     }
     @Override
     public void execute(){
-
-
         double pid = -drivePID.calculate(m_drive.getDriveDistanceInches(m_angle), m_inches);
         double rot = -rotPID.calculate(m_drive.getRobotAngle(), 0);
 
         double x = pid * Math.sin(Math.toRadians(DAngle.getAngle(m_angle)));
         double y = pid * Math.cos(Math.toRadians(DAngle.getAngle(m_angle)));
-        m_drive.driveCartesianIK(y,x,rot,0);
+        m_drive.driveCartesianIK(y,x,rot);
         while(m_pidTimer.seconds() < 0.05){}
         m_pidTimer.reset();
 

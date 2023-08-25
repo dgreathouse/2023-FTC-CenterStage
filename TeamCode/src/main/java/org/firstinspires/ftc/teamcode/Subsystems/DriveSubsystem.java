@@ -38,21 +38,21 @@ public class DriveSubsystem extends SubsystemBase {
     public void initHardware(){
         m_flDrive = new MotorEx(m_opMode.hardwareMap, Hw.s_fl, Motor.GoBILDA.RPM_435);
         m_flDrive.setInverted(false);
-        m_flDrive.setRunMode(Motor.RunMode.RawPower);
+        m_flDrive.setRunMode(Motor.RunMode.VelocityControl);
         m_flDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m_flDrive.setDistancePerPulse(k.DRIVE.InchPerCount);
         m_flDrive.encoder.setDirection(Motor.Direction.REVERSE);
 
         m_frDrive = new MotorEx(m_opMode.hardwareMap, Hw.s_fr, Motor.GoBILDA.RPM_435);
         m_frDrive.setInverted(false);
-        m_frDrive.setRunMode(Motor.RunMode.RawPower);
+        m_frDrive.setRunMode(Motor.RunMode.VelocityControl);
         m_frDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m_frDrive.setDistancePerPulse(k.DRIVE.InchPerCount);
         m_frDrive.encoder.setDirection(Motor.Direction.REVERSE);
 
         m_bDrive = new MotorEx(m_opMode.hardwareMap, Hw.s_b, Motor.GoBILDA.RPM_435);
         m_bDrive.setInverted(false);
-        m_bDrive.setRunMode(Motor.RunMode.RawPower);
+        m_bDrive.setRunMode(Motor.RunMode.VelocityControl);
         m_bDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m_bDrive.setDistancePerPulse(k.DRIVE.InchPerCount);
         m_bDrive.encoder.setDirection(Motor.Direction.REVERSE);
@@ -63,25 +63,24 @@ public class DriveSubsystem extends SubsystemBase {
      * @param _ySpeed The forward speed in +/- 1 + is forward
      * @param _xSpeed The strafe speed in +/- 1 left is positive
      * @param _zRotation The rotation speed in +/- 1 CCW is positive
-     * @param _gyroAngle The angle of the robot for use with field oriented mode.
      */
-    public void driveCartesianIK(double _ySpeed, double _xSpeed, double _zRotation, double _gyroAngle) {
-        // Create a new vector2D from the X and Y inputs that contains the angle and magnitude
-        Vector2d input = new Vector2d(_ySpeed, _xSpeed);
-        // create a variable that holds the new vector if we are using the gyro for field oriented mode
-        Vector2d fieldOrientedVector = m_isFieldOriented ? input.rotateBy(_gyroAngle) : input.rotateBy(0);
-        fieldOrientedVector.normalize();
+    public void driveCartesianIK(double _ySpeed, double _xSpeed, double _zRotation) {
+
+        // Create a variable that holds the new vector if we are using the gyro for field oriented mode
+        Vector2d inputVector2D = m_isFieldOriented ? new Vector2d(_ySpeed, _xSpeed).rotateBy(getRobotAngle()) : new Vector2d(_ySpeed, _xSpeed);
+        inputVector2D.normalize();
         // Calculate the individual motor speeds based on the desired vector and the wheel orientation.
         // TODO: put a PID around the rotation so the robot stays at one angle while driving.
-        double flSpeed = fieldOrientedVector.scalarProject(m_flVector) + _zRotation;
-        double frSpeed = fieldOrientedVector.scalarProject(m_frVector) + _zRotation;
-        double bSpeed = fieldOrientedVector.scalarProject(m_bVector) + _zRotation;
+        double flSpeed = inputVector2D.scalarProject(m_flVector) + _zRotation;
+        double frSpeed = inputVector2D.scalarProject(m_frVector) + _zRotation;
+        double bSpeed = inputVector2D.scalarProject(m_bVector) + _zRotation;
 
-        // Set the motor Speeds
-        // TODO: change the motor to be in velocity mode for better control. Set RunMode and scale.
+        // Set the motor velocity because motors are in velocity control. Still +/-1.0
         m_flDrive.set(flSpeed);
         m_frDrive.set(frSpeed);
         m_bDrive.set(bSpeed);
+        // TODO: used for testing of angle and +/-180 atan from x,y inputs
+        m_opMode.telemetry.addData("InputAngle", inputVector2D.angle());
 
     }
     public void toggleIsFieldOriented(){
