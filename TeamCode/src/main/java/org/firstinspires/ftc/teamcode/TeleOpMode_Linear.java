@@ -93,7 +93,7 @@ public class TeleOpMode_Linear extends CommandOpMode {
             // Calculate the run rate of this loop
             m_timerAvg += m_elapsedTimer.seconds();
             if(m_timerCnt++ >= 10){
-                telemetry.addData("LoopRate = ", m_timerAvg/10);
+                telemetry.addData("ChLoopRate = ", m_timerAvg/10);
                 m_timerAvg = 0.0; m_timerCnt = 0;
             }
             telemetry.update();
