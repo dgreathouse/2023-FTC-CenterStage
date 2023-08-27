@@ -64,18 +64,16 @@ public class DriveSubsystem extends SubsystemBase {
      * @param _zRotation The rotation speed in +/- 1 CCW is positive
      */
     public void driveCartesianXY(double _ySpeed, double _xSpeed, double _zRotation) {
+
         // Create a variable that holds the new vector if we are using the gyro for field oriented mode
         Vector2d inputVector2D = m_isFieldOriented ? new Vector2d(_ySpeed, _xSpeed).rotateBy(getRobotAngle()) : new Vector2d(_ySpeed, _xSpeed);
         inputVector2D.normalize();
-        // Calculate the individual motor speeds based on the desired vector and the wheel orientation.
-        double flSpeed = inputVector2D.scalarProject(m_flVector) + _zRotation;
-        double frSpeed = inputVector2D.scalarProject(m_frVector) + _zRotation;
-        double bSpeed = inputVector2D.scalarProject(m_bVector) + _zRotation;
 
-        // Set the motor velocity because motors are in velocity control. Still +/-1.0
-        m_flDrive.set(flSpeed);
-        m_frDrive.set(frSpeed);
-        m_bDrive.set(bSpeed);
+        // Set the motor speeds
+        m_flDrive.set(inputVector2D.scalarProject(m_flVector) + _zRotation);
+        m_frDrive.set(inputVector2D.scalarProject(m_frVector) + _zRotation);
+        m_bDrive.set(inputVector2D.scalarProject(m_bVector) + _zRotation);
+
         // TODO: used for testing of angle and +/-180 atan from x,y inputs
         m_opMode.telemetry.addData("InputAngle", inputVector2D.angle());
     }
@@ -88,14 +86,10 @@ public class DriveSubsystem extends SubsystemBase {
         // Field oriented mode
         Vector2d inputVector2D = new Vector2d(y, x).rotateBy(getRobotAngle());
 
-        double flSpeed = inputVector2D.scalarProject(m_flVector) + _rot;
-        double frSpeed = inputVector2D.scalarProject(m_frVector) + _rot;
-        double bSpeed = inputVector2D.scalarProject(m_bVector) + _rot;
+        m_flDrive.set(inputVector2D.scalarProject(m_flVector) + _rot);
+        m_frDrive.set(inputVector2D.scalarProject(m_frVector) + _rot);
+        m_bDrive.set(inputVector2D.scalarProject(m_bVector) + _rot);
 
-        // Set the motor velocity because motors are in velocity control. Still +/-1.0
-        m_flDrive.set(flSpeed);
-        m_frDrive.set(frSpeed);
-        m_bDrive.set(bSpeed);
     }
     public void toggleIsFieldOriented(){
         m_isFieldOriented = !m_isFieldOriented;
