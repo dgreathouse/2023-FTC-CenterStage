@@ -4,7 +4,9 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 
 import org.firstinspires.ftc.teamcode.Subsystems.SampleSubsystem;
-
+// FIXME: Copy this class and SampleSubsystem to appropriate folders.
+// FIXME: Rename by refactoring the file name to appropriate name
+// FIXME: Refactor/Rename m_sample to appropriate name
 public class SampleDefaultCommand extends CommandBase {
     SampleSubsystem m_sample;
     CommandOpMode m_opMode;

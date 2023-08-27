@@ -5,13 +5,10 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
-import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Lib.DAngle;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
-
-import java.util.concurrent.TimeUnit;
 
 public class AutoDriveDistance extends CommandBase {
     CommandOpMode m_opMode;
@@ -48,7 +45,7 @@ public class AutoDriveDistance extends CommandBase {
 
         double x = pid * Math.sin(Math.toRadians(DAngle.getAngle(m_angle)));
         double y = pid * Math.cos(Math.toRadians(DAngle.getAngle(m_angle)));
-        m_drive.driveCartesianIK(y,x,rot);
+        m_drive.driveCartesianXY(y,x,rot);
         while(m_pidTimer.seconds() < 0.05){}
         m_pidTimer.reset();
 

@@ -10,57 +10,59 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Lib.DAngle;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 
-/**
- *  Option 1. Paths
- *    Create a table of distance, robot angle travel angle.
- *    Limitations: travel angle can only be 0,60x
- *    Fix: Pose estimator no PID velocity
+/** Drive the robot at a speed, angle for a certain time. Also rotate the robot to an angle while driving
+   Since the robot drives at a velocity the only changing variable to get a consistent distance is
+   the battery which changes the time it takes to go from stop to full velocity. We hope this change
+   will not affect the accuracy to much. There is no PID on distance and the coast time will need
+   to be considered.
  */
-public class AutoDriveCurve extends CommandBase {
+public class AutoDriveTimeVel extends CommandBase {
     CommandOpMode m_opMode;
     DriveSubsystem m_drive;
-    DAngle m_angle;
-    double m_inches;
+    double m_angle;
+    double m_robotAngle;
     double m_timeOut;
-    double m_maxSpeed;
-    ProfiledPIDController drivePID = new ProfiledPIDController(0.1,0.01,0, new TrapezoidProfile.Constraints(200,400));
+    double m_speed;
+
     PIDController rotPID = new PIDController(.01,0,0);
     ElapsedTime m_elapsedTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     ElapsedTime m_pidTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    public AutoDriveCurve(CommandOpMode _opMode, DriveSubsystem _drive, double _inches, double _maxSpeed, DAngle _angle, double _timeOut) {
+    public AutoDriveTimeVel(CommandOpMode _opMode, DriveSubsystem _drive, double _angle, double _speed, double _robotAngle, double _timeOut) {
         m_opMode = _opMode;
         m_drive = _drive;
         m_angle = _angle;
-        m_inches = _inches;
+        m_speed = _speed;
+        m_robotAngle = _robotAngle;
         m_timeOut = _timeOut;
-        m_maxSpeed = _maxSpeed;
-
     }
     @Override
     public void initialize(){
-        drivePID.reset();
-        drivePID.setTolerance(0.2,1);
+        rotPID.reset();
+
 
         m_drive.resetMotors();
     }
     @Override
     public void execute(){
-        double pid = -drivePID.calculate(m_drive.getDriveDistanceInches(m_angle), m_inches);
-        double rot = -rotPID.calculate(m_drive.getRobotAngle(), 0);
-        // FIXME: The angle alone gives a normalized value which means speed will be max
-        double y = pid * Math.sin(Math.toRadians(DAngle.getAngle(m_angle)));
-        double x = pid * Math.cos(Math.toRadians(DAngle.getAngle(m_angle)));
-        m_drive.driveCartesianXY(y,x,rot);
+
+        double rot = -rotPID.calculate(m_drive.getRobotAngle(), m_robotAngle);
+        // FIXME: the speed is a sudden 0 to speed input when the drive starts. This can be slowed down with a slewrate limiter if needed.
+        m_drive.drivePolar(m_angle, m_speed, rot);
+
         while(m_pidTimer.seconds() < 0.05){}
         m_pidTimer.reset();
 
     }
     @Override
     public boolean isFinished(){
-        if(m_elapsedTimer.seconds() > m_timeOut || drivePID.atGoal()){
+        if(m_elapsedTimer.seconds() > m_timeOut){
             return true;
         }
         return false;
+    }
+    @Override
+    public void end(boolean _interrupted){
+        m_drive.disableMotors();
     }
 }

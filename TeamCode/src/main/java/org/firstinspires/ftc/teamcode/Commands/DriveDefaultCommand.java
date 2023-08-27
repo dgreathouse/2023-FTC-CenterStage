@@ -47,16 +47,13 @@ public class DriveDefaultCommand extends CommandBase {
 
         // Scale the turning rotation down by 1/2
         m_z = m_z * 0.5;
-        // Call the drive method "driveCaresianIK" with the stick X,Y,Z and angle parameters
-        m_drive.driveCartesianIK(m_y,-m_x, m_z);
-        // Display the values of X,Y,Z on the driveStation.
-//        m_opMode.telemetry.addData("x = ", -m_x);
-//        m_opMode.telemetry.addData("y = ", m_y);
-//        m_opMode.telemetry.addData("z = ", m_z);
+        // Call the drive method "driveCaresianXY" with the stick X,Y,Z and angle parameters
+        m_drive.driveCartesianXY(m_y,-m_x, m_z);
+
     }
     @Override
     public void end(boolean _interrupted){
-        m_drive.driveCartesianIK(0,0,0);
+        m_drive.driveCartesianXY(0,0,0);
     }
 
 }

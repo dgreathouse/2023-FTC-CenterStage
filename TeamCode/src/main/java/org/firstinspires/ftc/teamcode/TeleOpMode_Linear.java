@@ -49,6 +49,9 @@ import org.firstinspires.ftc.teamcode.Subsystems.SampleSubsystem;
 @TeleOp(name="TeleOp 1", group="Linear Opmode")
 
 public class TeleOpMode_Linear extends CommandOpMode {
+    ElapsedTime m_elapsedTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    double m_timerAvg = 0.0;
+    double m_timerCnt = 0;
     private Hw hw;
     private DriveSubsystem m_drive;
     private SampleSubsystem m_sample;  // FIXME: create the correct robot subsystems
@@ -73,8 +76,8 @@ public class TeleOpMode_Linear extends CommandOpMode {
         m_sample.setDefaultCommand(sampleDefaultCommand);// FIXME: create the correct robot Commands
 
         // Set up buttons
-        Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenActive(new InstantCommand(() -> m_drive.resetGyro(), m_drive));
-        Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenActive(new InstantCommand(() -> m_drive.toggleIsFieldOriented(), m_drive));
+        Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(() -> m_drive.resetGyro(), m_drive));
+        Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(() -> m_drive.toggleIsFieldOriented(), m_drive));
 
     }
 
@@ -87,7 +90,15 @@ public class TeleOpMode_Linear extends CommandOpMode {
         // run the scheduler
         while (!isStopRequested() && opModeIsActive()) {
             run();
+            // Calculate the run rate of this loop
+            m_timerAvg += m_elapsedTimer.seconds();
+            if(m_timerCnt++ >= 10){
+                telemetry.addData("RunLoopRate = ", m_timerAvg/10);
+                m_timerAvg = 0.0; m_timerCnt = 0;
+            }
             telemetry.update();
+            // wait till timer is > 50ms to try an create a stable run rate
+            while(m_elapsedTimer.seconds() < 0.05){} m_elapsedTimer.reset();
         }
         reset();
     }
