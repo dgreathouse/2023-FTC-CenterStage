@@ -75,7 +75,9 @@ public class DriveSubsystem extends SubsystemBase {
         m_bDrive.set(inputVector2D.scalarProject(m_bVector) + _zRotation);
 
         // TODO: used for testing of angle and +/-180 atan from x,y inputs
-        m_opMode.telemetry.addData("InputAngle", inputVector2D.angle());
+        m_opMode.telemetry.addData("InputAngle =", Math.toDegrees(inputVector2D.angle()));
+        m_opMode.telemetry.addData("_ySpeed =", _ySpeed);
+        m_opMode.telemetry.addData("_xSpeed", _xSpeed);
     }
     public void drivePolar(double _angle, double _speed, double _rot){
         // _speed is the hypotenuse and _angle is angle
