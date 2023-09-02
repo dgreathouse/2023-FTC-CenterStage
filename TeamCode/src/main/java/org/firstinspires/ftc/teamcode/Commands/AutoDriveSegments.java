@@ -49,7 +49,7 @@ public class AutoDriveSegments extends CommandBase {
     @Override
     public void execute(){
         m_segment = m_segments.get(m_index);
-
+        //TODO: if start move we may be able to ramp the magnitude up to get a consistent starting distance.
         double rot = -rotPID.calculate(m_drive.getRobotAngle(), m_segment.m_robotAngle);
         m_drive.drivePolar(m_segment.m_angle, m_segment.m_magnitude, rot);
 
