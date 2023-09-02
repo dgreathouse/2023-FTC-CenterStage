@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -41,6 +42,8 @@ import org.firstinspires.ftc.teamcode.Lib.Hw;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.SampleSubsystem;
 
+import java.util.concurrent.TimeUnit;
+
 
 /**
 
@@ -49,9 +52,11 @@ import org.firstinspires.ftc.teamcode.Subsystems.SampleSubsystem;
 @TeleOp(name="TeleOp 1", group="Linear Opmode")
 
 public class TeleOpMode_Linear extends CommandOpMode {
+    Timing.Timer m_timer;
     ElapsedTime m_elapsedTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     double m_timerAvg = 0.0;
     double m_timerCnt = 0;
+    double m_loopRate = 0;
     private Hw hw;
     private DriveSubsystem m_drive;
     private SampleSubsystem m_sample;  // FIXME: create the correct robot subsystems
@@ -79,6 +84,8 @@ public class TeleOpMode_Linear extends CommandOpMode {
         Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(() -> m_drive.resetGyro(), m_drive));
         Hw.s_gpDriver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(() -> m_drive.toggleIsFieldOriented(), m_drive));
 
+        m_timer = new Timing.Timer(100, TimeUnit.MILLISECONDS);
+        m_timer.start();
     }
 
     @Override
@@ -91,14 +98,12 @@ public class TeleOpMode_Linear extends CommandOpMode {
         while (!isStopRequested() && opModeIsActive()) {
             run();
             // Calculate the run rate of this loop
-            m_timerAvg += m_elapsedTimer.seconds();
-            if(m_timerCnt++ >= 10){
-                telemetry.addData("ChLoopRate = ", m_timerAvg/10);
-                m_timerAvg = 0.0; m_timerCnt = 0;
-            }
+
+
             telemetry.update();
-            // wait till timer is > 50ms to try an create a stable run rate
-            while(m_elapsedTimer.seconds() < 0.05){} m_elapsedTimer.reset();
+            telemetry.addData("CPU Load % = ", 100 - m_timer.remainingTime());
+            // wait till timer is > 100ms to try an create a stable run rate
+            while(!m_timer.done()){} m_timer.start();
         }
         reset();
     }

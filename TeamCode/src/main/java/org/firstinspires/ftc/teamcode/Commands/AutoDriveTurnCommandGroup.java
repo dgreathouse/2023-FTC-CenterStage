@@ -15,8 +15,8 @@ public class AutoDriveTurnCommandGroup extends SequentialCommandGroup {
         addCommands(
                 //new AutoDetectAprilTag(_opMode, 30)
             //new AutoDriveDistance(_opMode,_drive,50,.7, DAngle.ang_0,10)
-                new AutoDriveTimeVel(_opMode,_drive,0,0.5,0,2.0),
-                new AutoDriveTimeVel(_opMode,_drive,90,0.5,90,2.0),
+               // new AutoDriveTimeVel(_opMode,_drive,0,0.5,0,2.0),
+              //  new AutoDriveTimeVel(_opMode,_drive,90,0.5,90,2.0),
                 new AutoDriveSegments(_opMode, _drive,Segments.figure8)
         );
 
