@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/** Drive the robot at a speed, angle for a certain time. Also rotate the robot to an angle while driving
+/** Drive the robot at a speed and angle for a certain time. Also rotate the robot to an angle while driving
    Since the robot drives at a velocity the only changing variable to get a consistent distance is
    the battery which changes the time it takes to go from stop to full velocity. We hope this change
    will not affect the accuracy to much. There is no PID on distance and the coast time will need
@@ -31,7 +31,7 @@ public class AutoDriveSegments extends CommandBase {
     boolean m_isFinished = false;
     PIDController rotPID = new PIDController(.01,0,0);
     Timing.Timer m_timer;
-    ElapsedTime m_elapsedTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+
 
     public AutoDriveSegments(CommandOpMode _opMode, DriveSubsystem _drive, List<Segment> _segments) {
         m_opMode = _opMode;
@@ -44,7 +44,7 @@ public class AutoDriveSegments extends CommandBase {
         rotPID.reset();
         m_timer = new Timing.Timer(m_segments.get(0).m_time, TimeUnit.MILLISECONDS);
         m_timer.start();
-        m_elapsedTimer.reset();
+
     }
     @Override
     public void execute(){
@@ -55,6 +55,7 @@ public class AutoDriveSegments extends CommandBase {
 
         if(m_timer.done()){
             m_index++;
+            //m_isFinished = m_index == m_segments.size() ? true : false;
             if(m_index == m_segments.size()){
                 m_isFinished = true;
             }
@@ -65,6 +66,7 @@ public class AutoDriveSegments extends CommandBase {
     }
     @Override
     public boolean isFinished(){
+        //return m_isFinished == true ? true : false;
         if(m_isFinished){
             return true;
         }
