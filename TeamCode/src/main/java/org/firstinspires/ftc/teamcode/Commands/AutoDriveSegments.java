@@ -52,28 +52,30 @@ public class AutoDriveSegments extends CommandBase {
         //TODO: if start move we may be able to ramp the magnitude up to get a consistent starting distance.
         double rot = -rotPID.calculate(m_drive.getRobotAngle(), m_segment.m_robotAngle);
         m_drive.drivePolar(m_segment.m_angle, m_segment.m_magnitude, rot);
-
+        m_opMode.telemetry.addData("Index", m_index);
         if(m_timer.done()){
             m_index++;
             //m_isFinished = m_index == m_segments.size() ? true : false;
-            if(m_index == m_segments.size()){
+            if(m_index >= m_segments.size()){
                 m_isFinished = true;
+            }else {
+                m_timer = new Timing.Timer(m_segments.get(m_index).m_time, TimeUnit.MILLISECONDS);
+                m_timer.start();
             }
-            m_timer = new Timing.Timer(m_segments.get(m_index).m_time, TimeUnit.MILLISECONDS);
-            m_timer.start();
         }
 
     }
     @Override
     public boolean isFinished(){
-        //return m_isFinished == true ? true : false;
-        if(m_isFinished){
-            return true;
-        }
-        return false;
+
+        return m_isFinished == true ? true : false;
+
     }
     @Override
     public void end(boolean _interrupted){
         m_drive.disableMotors();
+        // FixMe: The opMode is not terminating on the end of CommandGroup. This stops the OpMode but should not be here.
+       // m_opMode.terminateOpModeNow();
+
     }
 }

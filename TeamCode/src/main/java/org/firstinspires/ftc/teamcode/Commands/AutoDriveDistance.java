@@ -45,7 +45,7 @@ public class AutoDriveDistance extends CommandBase {
 
         double x = pid * Math.sin(Math.toRadians(DAngle.getAngle(m_angle)));
         double y = pid * Math.cos(Math.toRadians(DAngle.getAngle(m_angle)));
-        m_drive.driveCartesianXY(y,x,rot);
+        m_drive.driveXY(y,x,rot);
         while(m_pidTimer.seconds() < 0.05){}
         m_pidTimer.reset();
 

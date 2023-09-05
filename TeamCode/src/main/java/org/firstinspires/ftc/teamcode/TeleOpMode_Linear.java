@@ -53,7 +53,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TeleOpMode_Linear extends CommandOpMode {
     Timing.Timer m_timer;
-    ElapsedTime m_elapsedTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+
     double m_timerAvg = 0.0;
     double m_timerCnt = 0;
     double m_loopRate = 0;
@@ -101,7 +101,7 @@ public class TeleOpMode_Linear extends CommandOpMode {
 
 
             telemetry.update();
-            telemetry.addData("CPU Load % = ", 100 - m_timer.remainingTime());
+            telemetry.addData("CPU Load TeleOp %", 100 - m_timer.remainingTime());
             // wait till timer is > 100ms to try an create a stable run rate
             while(!m_timer.done()){} m_timer.start();
         }
