@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
@@ -10,15 +9,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Lib.DAngle;
 import org.firstinspires.ftc.teamcode.Lib.Hw;
+import org.firstinspires.ftc.teamcode.Lib.KiwiDrive;
 import org.firstinspires.ftc.teamcode.Lib.k;
 
 public class DriveSubsystem extends SubsystemBase {
     // Declare the MotorEx and Vector2D classes for each motor
-    private MotorEx m_flDrive, m_frDrive, m_bDrive;
-    private Vector2d m_flVector, m_frVector, m_bVector;
+    private MotorEx m_lDrive, m_rDrive, m_bDrive;
+    private KiwiDrive m_drive;
+
+
     // Declare a CommandOpMode variable
     private CommandOpMode m_opMode;
-    private boolean m_isFieldOriented = true;
 
     /** Class Constructor
      *
@@ -27,74 +28,55 @@ public class DriveSubsystem extends SubsystemBase {
     public DriveSubsystem(CommandOpMode _opMode) {
         m_opMode = _opMode;
 
-        m_flVector = new Vector2d(Math.cos(30.0 * (Math.PI / 180.0)), Math.sin(30.0 * (Math.PI / 180.0)));
-        m_frVector = new Vector2d(Math.cos(150.0 * (Math.PI / 180.0)), Math.sin(150.0 * (Math.PI / 180.0)));
-        m_bVector = new Vector2d(Math.cos(270.0 * (Math.PI / 180.0)),  Math.sin(270.0 * (Math.PI / 180.0)));
-
         initHardware();
+
+        m_drive = new KiwiDrive(m_lDrive,m_rDrive, m_bDrive);
 
     }
     public void initHardware(){
-        m_flDrive = new MotorEx(m_opMode.hardwareMap, Hw.s_fl, Motor.GoBILDA.RPM_435);
-        m_flDrive.setInverted(false);
-        m_flDrive.setRunMode(Motor.RunMode.VelocityControl);
-        m_flDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        m_flDrive.setDistancePerPulse(k.DRIVE.InchPerCount);
-        m_flDrive.encoder.setDirection(Motor.Direction.REVERSE);
+        m_lDrive = new MotorEx(m_opMode.hardwareMap, Hw.s_fl, Motor.GoBILDA.RPM_435);
+        m_lDrive.setInverted(true);
+        m_lDrive.setRunMode(Motor.RunMode.VelocityControl);
+        m_lDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        m_lDrive.setDistancePerPulse(k.DRIVE.InchPerCount);
+        m_lDrive.encoder.setDirection(Motor.Direction.FORWARD);
+        m_lDrive.setVeloCoefficients(1.0,0.01,0);
 
-        m_frDrive = new MotorEx(m_opMode.hardwareMap, Hw.s_fr, Motor.GoBILDA.RPM_435);
-        m_frDrive.setInverted(false);
-        m_frDrive.setRunMode(Motor.RunMode.VelocityControl);
-        m_frDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        m_frDrive.setDistancePerPulse(k.DRIVE.InchPerCount);
-        m_frDrive.encoder.setDirection(Motor.Direction.REVERSE);
+        m_rDrive = new MotorEx(m_opMode.hardwareMap, Hw.s_fr, Motor.GoBILDA.RPM_435);
+        m_rDrive.setInverted(true);
+        m_rDrive.setRunMode(Motor.RunMode.VelocityControl);
+        m_rDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        m_rDrive.setDistancePerPulse(k.DRIVE.InchPerCount);
+        m_rDrive.encoder.setDirection(Motor.Direction.REVERSE);
+        m_rDrive.setVeloCoefficients(1.0,0.01,0);
 
         m_bDrive = new MotorEx(m_opMode.hardwareMap, Hw.s_b, Motor.GoBILDA.RPM_435);
-        m_bDrive.setInverted(false);
+        m_bDrive.setInverted(true);
         m_bDrive.setRunMode(Motor.RunMode.VelocityControl);
         m_bDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         m_bDrive.setDistancePerPulse(k.DRIVE.InchPerCount);
         m_bDrive.encoder.setDirection(Motor.Direction.REVERSE);
+        m_bDrive.setVeloCoefficients(1.0,0.01,0);
+
     }
 
     /**
      *
-     * @param _ySpeed The forward speed in +/- 1 + is forward
-     * @param _xSpeed The strafe speed in +/- 1 left is positive
-     * @param _zRotation The rotation speed in +/- 1 CCW is positive
+     * @param _strafeSpeed The forward speed in +/- 1 left is positive
+     * @param _forwardSpeed The strafe speed in +/- 1 forward is positive
+     * @param _zRotation The rotation speed in +/- 1 CCW/left is positive
      */
-    public void driveCartesianXY(double _ySpeed, double _xSpeed, double _zRotation) {
+    public void driveXY(double _strafeSpeed, double _forwardSpeed, double _zRotation) {
 
-        // Create a variable that holds the new vector if we are using the gyro for field oriented mode
-        Vector2d inputVector2D = m_isFieldOriented ? new Vector2d(_ySpeed, _xSpeed).rotateBy(getRobotAngle()) : new Vector2d(_ySpeed, _xSpeed);
-        inputVector2D.normalize();
+        m_drive.driveXY(_strafeSpeed,_forwardSpeed,_zRotation,getRobotAngle());
 
-        // Set the motor speeds
-        m_flDrive.set(inputVector2D.scalarProject(m_flVector) + _zRotation);
-        m_frDrive.set(inputVector2D.scalarProject(m_frVector) + _zRotation);
-        m_bDrive.set(inputVector2D.scalarProject(m_bVector) + _zRotation);
-
-        // TODO: used for testing of angle and +/-180 atan from x,y inputs
-        m_opMode.telemetry.addData("InputAngle =", Math.toDegrees(inputVector2D.angle()));
-        m_opMode.telemetry.addData("_ySpeed =", _ySpeed);
-        m_opMode.telemetry.addData("_xSpeed", _xSpeed);
     }
+
     public void drivePolar(double _angle, double _speed, double _rot){
-        // _speed is the hypotenuse and _angle is angle
-        // We need to get the X, Y components so we can create a Vector2D value
-        double x = Math.sin(Math.toRadians(_angle)) * _speed;
-        double y = Math.cos(Math.toRadians(_angle)) * _speed;
-
-        // Field oriented mode
-        Vector2d inputVector2D = new Vector2d(y, x).rotateBy(getRobotAngle());
-
-        m_flDrive.set(inputVector2D.scalarProject(m_flVector) + _rot);
-        m_frDrive.set(inputVector2D.scalarProject(m_frVector) + _rot);
-        m_bDrive.set(inputVector2D.scalarProject(m_bVector) + _rot);
-
+        m_drive.drivePolar(_angle,_speed,_rot,getRobotAngle());
     }
     public void toggleIsFieldOriented(){
-        m_isFieldOriented = !m_isFieldOriented;
+        m_drive.toggleIsFieldOriented();
     }
     /**
      *
@@ -116,9 +98,9 @@ public class DriveSubsystem extends SubsystemBase {
      * Reset the motor encoders back to zero
      */
     public void resetMotors(){
-        m_flDrive.resetEncoder();
+        m_lDrive.resetEncoder();
         m_bDrive.resetEncoder();
-        m_frDrive.resetEncoder();
+        m_rDrive.resetEncoder();
 
     }
 
@@ -129,8 +111,8 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public double getDriveDistanceInches(DAngle _angle){
         double rtn = 0;
-        double left = m_flDrive.getDistance();
-        double right = m_frDrive.getDistance();
+        double left = m_lDrive.getDistance();
+        double right = m_rDrive.getDistance();
         double back = m_bDrive.getDistance();
         switch (_angle){
             case ang_0: // Left, Right
@@ -158,20 +140,26 @@ public class DriveSubsystem extends SubsystemBase {
         return rtn;
     }
     public void disableMotors(){
-        m_flDrive.set(0);
-        m_frDrive.set(0);
+        m_lDrive.set(0);
+        m_rDrive.set(0);
         m_bDrive.set(0);
+    }
+    public void setIsFieldOriented(boolean _val){
+        m_drive.setIsFieldOriented(_val);
     }
     @Override
     public void periodic(){
-        m_opMode.telemetry.addData("L Inches = ", m_flDrive.getDistance());
-        m_opMode.telemetry.addData("R Inches = ", m_frDrive.getDistance());
-        m_opMode.telemetry.addData("B Inches = ", m_bDrive.getDistance());
-        m_opMode.telemetry.addData("L Vel = ", m_flDrive.getVelocity());
-        m_opMode.telemetry.addData("R Vel = ", m_frDrive.getVelocity());
-        m_opMode.telemetry.addData("B Vel = ", m_bDrive.getVelocity());
-        m_opMode.telemetry.addData("Robot Angle = ",getRobotAngle());
-        m_opMode.telemetry.addData("DriveDistance = ", getDriveDistanceInches(DAngle.ang_0));
-
+        m_opMode.telemetry.addData("L Inches", m_lDrive.getDistance());
+        m_opMode.telemetry.addData("R Inches", m_rDrive.getDistance());
+        m_opMode.telemetry.addData("B Inches", m_bDrive.getDistance());
+        m_opMode.telemetry.addData("L Vel", m_lDrive.getVelocity());
+        m_opMode.telemetry.addData("R Vel", m_rDrive.getVelocity());
+        m_opMode.telemetry.addData("B Vel", m_bDrive.getVelocity());
+        m_opMode.telemetry.addData("Robot Angle",getRobotAngle());
+        m_opMode.telemetry.addData("DriveDistance", getDriveDistanceInches(DAngle.ang_0));
+        m_opMode.telemetry.addData("DriveAngle", m_drive.getDriveAngle());
+        m_opMode.telemetry.addData("Strafe", m_drive.getStrafe());
+        m_opMode.telemetry.addData("Forward",m_drive.getForward());
+        m_opMode.telemetry.addData("FieldOriented", m_drive.getIsFieldOriented());
     }
 }

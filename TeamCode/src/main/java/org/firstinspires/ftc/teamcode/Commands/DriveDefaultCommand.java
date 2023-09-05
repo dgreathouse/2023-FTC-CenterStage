@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 
 
 import org.firstinspires.ftc.teamcode.Lib.Hw;
-import org.firstinspires.ftc.teamcode.Lib.MyMath;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 
 public class DriveDefaultCommand extends CommandBase {
@@ -32,7 +31,7 @@ public class DriveDefaultCommand extends CommandBase {
 
     @Override
     public void initialize(){
-
+        m_drive.setIsFieldOriented(true);
     }
 
     @Override
@@ -40,22 +39,21 @@ public class DriveDefaultCommand extends CommandBase {
 
         // Get the X,Y, and Z axis values from the Driver joystick.
         // The values from the joystick are always in the range of +/- 1.0
-        // Deadband is a applied to prevent the small on center offset from making the robot move when the thumb is off the stick
-//        m_y = MyMath.applyDeadband(-Hw.s_gpDriver.getLeftY(), .05, 1.0);
-//        m_x = MyMath.applyDeadband(Hw.s_gpDriver.getLeftX(), .05, 1.0);
-//        m_z = MyMath.applyDeadband(-Hw.s_gpDriver.getRightX(), .05, 1.0);
-        m_y = -Hw.s_gpDriver.getLeftY();
-        m_x = Hw.s_gpDriver.getLeftX();
-        m_z = -Hw.s_gpDriver.getRightX();
-        // Scale the turning rotation down by 1/2
-        m_z = m_z * 0.25;
-        // Call the drive method "driveCaresianXY" with the stick X,Y,Z and angle parameters
-        m_drive.driveCartesianXY(m_y,-m_x, m_z);
 
+        m_y = Hw.s_gpDriver.getLeftY();
+        m_x = Hw.s_gpDriver.getLeftX();
+        m_z = Hw.s_gpDriver.getRightX();
+        // Scale the turning rotation down by 1/2
+        m_z = m_z * 0.35;
+        // Call the drive method "driveCaresianXY" with the stick X,Y,Z and angle parameters
+        m_drive.driveXY(m_x,m_y, m_z);
+       // m_drive.driveHDrive(m_y,m_x,m_z);
+        m_opMode.telemetry.addData("X", m_x);
+        m_opMode.telemetry.addData("Y", m_y);
     }
     @Override
     public void end(boolean _interrupted){
-        m_drive.driveCartesianXY(0,0,0);
+        m_drive.driveXY(0,0,0);
     }
 
 }

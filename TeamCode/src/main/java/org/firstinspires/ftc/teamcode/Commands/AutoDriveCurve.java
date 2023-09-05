@@ -51,7 +51,7 @@ public class AutoDriveCurve extends CommandBase {
         // FIXME: The angle alone gives a normalized value which means speed will be max
         double y = pid * Math.sin(Math.toRadians(DAngle.getAngle(m_angle)));
         double x = pid * Math.cos(Math.toRadians(DAngle.getAngle(m_angle)));
-        m_drive.driveCartesianXY(y,x,rot);
+        m_drive.driveXY(y,x,rot);
         while(m_pidTimer.seconds() < 0.05){}
         m_pidTimer.reset();
 
