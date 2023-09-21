@@ -74,8 +74,5 @@ public class AutoDriveSegments extends CommandBase {
     @Override
     public void end(boolean _interrupted){
         m_drive.disableMotors();
-        // FixMe: The opMode is not terminating on the end of CommandGroup. This stops the OpMode but should not be here.
-       // m_opMode.terminateOpModeNow();
-
     }
 }
