@@ -8,6 +8,9 @@ public class k {
         public static final double WheelDiameter_in = 3.78;
         public static final double WheelCircumference_in = Math.PI * WheelDiameter_in;
         public static final double InchPerCount = WheelCircumference_in / CPR;
+        public static final double[] DriveDistance =       { 00.00,01.00,02.00,03.00,04.00,05.00,12.00,24.00,36.00,48.00,100.00 };
+        public static final double[] DriveTime_Speed60 = { 00.00,01.00,02.00,03.00,04.00,05.00,12.00,24.00,36.00,48.00,100.00 };
+
     }
     public static final class CAMERA {
         public static final double FEET_PER_METER = 3.28084;
