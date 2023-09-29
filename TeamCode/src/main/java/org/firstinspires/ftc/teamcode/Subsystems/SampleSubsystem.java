@@ -22,6 +22,7 @@ public class SampleSubsystem extends SubsystemBase {
         m_myMotor.set(_speed);
     }
 
+
     private void initHardware(){
         m_myMotor = new MotorEx(m_opMode.hardwareMap, Hw.s_m, Motor.GoBILDA.RPM_435);
         m_myMotor.setRunMode(Motor.RunMode.RawPower);

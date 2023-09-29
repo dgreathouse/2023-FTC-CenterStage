@@ -11,7 +11,12 @@ public class Hw {
     public static String s_fr = "r"; // Drive Right Motor
     public static String s_b = "b";  // Drive Back Motor
     public static String s_m = "m";  // Sample Motor
-
+    public static String s_SH_m = "s"; // Shoulder Motor
+    public static String s_claw_servoLeft = "csl";
+    public static String s_claw_servoRight = "csr";
+    public static String s_claw_CSLeft = "ccsl";
+    public static String s_claw_CSRight = "ccsr";
+    public static String s_FA_Motor = "fm";
     public static GamepadEx s_gpOperator, s_gpDriver;
     public static IMU s_imu;
     CommandOpMode m_opMode;

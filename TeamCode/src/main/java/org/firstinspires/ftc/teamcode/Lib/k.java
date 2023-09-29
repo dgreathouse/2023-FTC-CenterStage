@@ -27,5 +27,8 @@ public class k {
         public static final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
         public static final int ID_TAG_OF_INTEREST = 1; // Tag ID 1 from the 36h11 family
     }
+    public static final class ARM {
+
+    }
 
 }
